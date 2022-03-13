@@ -122,7 +122,10 @@ var _ = Describe("nodeagent tests", func() {
 			if !ok {
 				return false
 			}
-			return tempgs.(*GameServerDetails).WasActivated && tempgs.(*GameServerDetails).PreviousGameState == GameStateStandingBy
+			tempgs.(*GameServerDetails).Mutex.RLock()
+			gsd := *tempgs.(*GameServerDetails)
+			tempgs.(*GameServerDetails).Mutex.RUnlock()
+			return gsd.WasActivated && gsd.PreviousGameState == GameStateStandingBy
 		}).Should(BeTrue())
 
 		// heartbeat from the game is still StandingBy
@@ -206,7 +209,10 @@ var _ = Describe("nodeagent tests", func() {
 					if !ok {
 						return false
 					}
-					return tempgs.(*GameServerDetails).WasActivated && tempgs.(*GameServerDetails).PreviousGameState == GameStateStandingBy
+					tempgs.(*GameServerDetails).Mutex.RLock()
+					gsd := *tempgs.(*GameServerDetails)
+					tempgs.(*GameServerDetails).Mutex.RUnlock()
+					return gsd.WasActivated && tempgs.(*GameServerDetails).PreviousGameState == GameStateStandingBy
 				}).Should(BeTrue())
 
 				// heartbeat from the game is still StandingBy
